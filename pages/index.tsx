@@ -7,10 +7,15 @@ import Image from "next/image";
 import Mascot from "../components/mascot";
 import Waves, { Wave } from "../components/waves";
 import { Source_Serif_Pro, Spectral } from "@next/font/google";
+import { ethers } from "ethers";
 import { useAccount } from "wagmi";
+import { useContractEvent } from "wagmi";
 import ChatSidebar from "../components/chatSidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
+import RulesModal from "../components/rulesModal";
+import Header from "../components/header";
 
 const spectral = Spectral({
   weight: ["800", "600"],
@@ -27,7 +32,46 @@ const Home: NextPage = () => {
       generateAvatar();
     },
   });
+
+  const findGames = useContractEvent({
+    address: process.env.NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS,
+    //abi: ensRegistryABI,
+    eventName: "NewOwner",
+    listener(node, label, owner) {
+      console.log(node, label, owner);
+    },
+  });
+
+  // Get the default provider
+  const provider = ethers.getDefaultProvider();
+
+  // Load the contract artifact
+  const artifact = require("../contracts/WhiteWhaleFactory.json");
+
+  // Get the contract address
+  //const contractAddress = artifact.networks["5777"].address;
+
+  // Get an instance of the contract
+  //const contract = new ethers.Contract(contractAddress, artifact.abi, provider);
+
+  // Retrieve past events from the blockchain
+
+  useEffect(() => {
+    // declare the data fetching function
+    const fetchContractEvents = async () => {
+      //const pastEvents = await contract.queryFilter("filter");
+    };
+
+    // call the function
+    fetchContractEvents()
+      // make sure to catch any error
+      .catch(console.error);
+  }, []);
+
   const [avatar, setAvatar] = useState("");
+  const [gameState, setGameState] = useState("setup");
+  const [disclaimed, setDisclaimed] = useState(false);
+  const [rulesModalOpen, setRulesModalOpen] = useState(false);
 
   async function generateAvatar() {
     axios
@@ -46,6 +90,48 @@ const Home: NextPage = () => {
     }
   }, [avatar]);
 
+  const Disclaimer = ({ ...props }) => {
+    const handleDisclaimer = () => {
+      setDisclaimed(true);
+    };
+    return (
+      <div className="space-y-4">
+        <p className="text-3xl font-hl font-extrabold uppercase tracking-wide">
+          first things first.
+        </p>
+        <p className="w-full">
+          Let&apos;s go ahead and get this out of the way. This is a an on-chain
+          social experiment, and by design, no token you deposit into this
+          contract may ever be returned to you. The spirit of this style of gift
+          exchange is to purposefully choose tokens of little to no value to you
+          — and to have fun fighting with your friends over silly and/or useless
+          gifts.
+        </p>
+        <p className="w-full">
+          You should read the{" "}
+          <span
+            onClick={() => props.setRulesModalOpen(true)}
+            className="underline cursor-pointer"
+          >
+            rules
+          </span>{" "}
+          before deciding to play. You should only play with a group you trust.
+        </p>
+        <p className="w-full">
+          By proceeding any further you acknowledge that you are swimming in the
+          dark sea of Ethereum and no one, not even the White Whale, can
+          guarantee your safety.
+        </p>
+        <button
+          onClick={() => handleDisclaimer()}
+          className="relative z-20 w-1/2 bg-walnut text-white py-2 rounded-lg uppercase font-bold tracking-wider cursor-pointer hover:shadow-lg"
+        >
+          aye, I agree
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className={`${spectral.variable} ${source.variable}`}>
       <Head>
@@ -55,11 +141,21 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="w-full h-screen relative body-gradient overflow-hidden font-body text-walnut text-lg">
-        <div className="fixed z-20 top-0 h-20 w-3/4 flex justify-between p-4">
-          <h3 className="capitalize text-walnut text-4xl font-hl font-extrabold">
-            white whale
-          </h3>
-        </div>
+        {rulesModalOpen ? (
+          <>
+            <RulesModal
+              rulesModalOpen={rulesModalOpen}
+              setRulesModalOpen={setRulesModalOpen}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+
+        <Header
+          rulesModalOpen={rulesModalOpen}
+          setRulesModalOpen={setRulesModalOpen}
+        />
         <div className="w-full absolute bottom-0 blur-[2px]">
           <Waves
             waveColor={"wave-fill-dark"}
@@ -79,27 +175,82 @@ const Home: NextPage = () => {
                 <div className="space-y-8 w-1/2">
                   {address ? (
                     <>
-                      <div>
-                        <p className="text-3xl font-hl font-extrabold uppercase tracking-wide">
-                          join a party
-                        </p>
-                        <p className="w-3/4">
-                          Search the network for an eligible party & join a pod
-                          for an existing game.
-                        </p>
-                      </div>
-                      <p className="py-8 text-4xl font-hl font-extrabold uppercase tracking-widest">
-                        —or—
-                      </p>
-                      <div>
-                        <p className="text-3xl font-hl font-extrabold uppercase">
-                          start your own
-                        </p>
-                        <p className="w-3/4">
-                          Deploy a White Whale party contract and be the master
-                          of your own destiny.
-                        </p>
-                      </div>
+                      {(() => {
+                        switch (gameState) {
+                          case "setup":
+                            return (
+                              <>
+                                <div className="space-y-4">
+                                  <p className="text-3xl font-hl font-extrabold uppercase tracking-wide">
+                                    join a party
+                                  </p>
+                                  <p className="w-3/4">
+                                    Search the network for an eligible party &
+                                    join a pod for an existing game.
+                                  </p>
+                                  <button
+                                    onClick={() => setGameState("searching")}
+                                    className="relative z-20 w-1/2 bg-walnut text-white py-2 rounded-lg uppercase font-bold tracking-wider cursor-pointer hover:shadow-lg"
+                                  >
+                                    find your pod
+                                  </button>
+                                </div>
+                                <p className="py-8 text-4xl font-hl font-extrabold uppercase tracking-widest">
+                                  —or—
+                                </p>
+                                <div className="space-y-4">
+                                  <p className="text-3xl font-hl font-extrabold uppercase">
+                                    start your own
+                                  </p>
+                                  <p className="w-3/4">
+                                    Deploy a White Whale party contract and be
+                                    the master of your own destiny.
+                                  </p>
+                                  <button
+                                    onClick={() => setGameState("creating")}
+                                    className="relative z-20 w-1/2 bg-walnut text-white py-2 rounded-lg uppercase font-bold tracking-wider cursor-pointer hover:shadow-lg"
+                                  >
+                                    deploy new party
+                                  </button>
+                                </div>
+                              </>
+                            );
+                          case "searching":
+                            return (
+                              <>
+                                {disclaimed ? (
+                                  <>available parties</>
+                                ) : (
+                                  <>
+                                    <Disclaimer
+                                      rulesModalOpen={rulesModalOpen}
+                                      setRulesModalOpen={setRulesModalOpen}
+                                    />
+                                  </>
+                                )}
+                              </>
+                            );
+                          case "creating":
+                            return (
+                              <>
+                                {disclaimed ? (
+                                  <>start a party</>
+                                ) : (
+                                  <>
+                                    <Disclaimer
+                                      rulesModalOpen={rulesModalOpen}
+                                      setRulesModalOpen={setRulesModalOpen}
+                                    />
+                                  </>
+                                )}
+                              </>
+                            );
+                          case "active":
+                            return <></>;
+                          default:
+                            return null;
+                        }
+                      })()}
                     </>
                   ) : (
                     <>
