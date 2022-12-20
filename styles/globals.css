@@ -1,16 +1,40 @@
-html,
-body {
-  padding: 0;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+html {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.body-gradient {
+  background: linear-gradient(#f4eeeb, #eee0da);
 }
 
-* {
-  box-sizing: border-box;
+.wave-fill-light {
+  fill: #eee0da;
+}
+.wave-fill-dark {
+  fill: #ddcecc;
+}
+.wave-stroke {
+  stroke: #eee0da;
+  stroke-miterlimit: 10;
+  stroke-width: 4px;
+}
+
+.wave-clip {
+  clip-path: url(#waveClip);
+}
+
+.wave-mask {
+  -webkit-mask-image: url(/wave-mask.png);
+  -webkit-mask-position: left top;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100%;
+
+  mask-image: url(/wave-mask.png);
+  mask-position: left top;
+  mask-repeat: no-repeat;
+  mask-size: 100%;
 }
