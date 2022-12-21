@@ -16,6 +16,10 @@ import axios from "axios";
 import Link from "next/link";
 import RulesModal from "../components/rulesModal";
 import Header from "../components/header";
+import Search from "../components/search";
+import Coral from "../components/coral";
+import Clam from "../components/clam";
+import Create from "../components/create";
 
 const spectral = Spectral({
   weight: ["800", "600"],
@@ -169,22 +173,30 @@ const Home: NextPage = () => {
           />
         </div>
         <AnimatePresence>
-          <div className="relative w-3/4 h-full p-16 top-0 left-0 shadow-xl">
+          <div className="relative w-3/4 h-full p-16 top-0 left-0">
             <div className="w-full h-full flex justify-center items-center">
               <div className="flex w-full items-center space-x-8">
-                <div className="space-y-8 w-1/2">
+                <div className="relative z-10 w-1/2 space-y-8">
                   {address ? (
                     <>
                       {(() => {
                         switch (gameState) {
                           case "setup":
                             return (
-                              <>
-                                <div className="space-y-4">
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{
+                                  duration: 0.7,
+                                  ease: "easeOut",
+                                }}
+                              >
+                                <div className="bg-warm p-6 rounded-lg shadow-md space-y-4">
                                   <p className="text-3xl font-hl font-extrabold uppercase tracking-wide">
                                     join a party
                                   </p>
-                                  <p className="w-3/4">
+                                  <p className="">
                                     Search the network for an eligible party &
                                     join a pod for an existing game.
                                   </p>
@@ -198,11 +210,11 @@ const Home: NextPage = () => {
                                 <p className="py-8 text-4xl font-hl font-extrabold uppercase tracking-widest">
                                   —or—
                                 </p>
-                                <div className="space-y-4">
+                                <div className="bg-warm p-6 rounded-lg shadow-md space-y-4">
                                   <p className="text-3xl font-hl font-extrabold uppercase">
                                     start your own
                                   </p>
-                                  <p className="w-3/4">
+                                  <p className="">
                                     Deploy a White Whale party contract and be
                                     the master of your own destiny.
                                   </p>
@@ -213,13 +225,27 @@ const Home: NextPage = () => {
                                     deploy new party
                                   </button>
                                 </div>
-                              </>
+                              </motion.div>
                             );
                           case "searching":
                             return (
                               <>
                                 {disclaimed ? (
-                                  <>available parties</>
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{
+                                      duration: 0.7,
+                                      ease: "easeOut",
+                                    }}
+                                    className="h-screen pt-24"
+                                  >
+                                    <Search
+                                      gameState={gameState}
+                                      setGameState={setGameState}
+                                    />
+                                  </motion.div>
                                 ) : (
                                   <>
                                     <Disclaimer
@@ -234,7 +260,23 @@ const Home: NextPage = () => {
                             return (
                               <>
                                 {disclaimed ? (
-                                  <>start a party</>
+                                  <>
+                                    <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      transition={{
+                                        duration: 0.7,
+                                        ease: "easeOut",
+                                      }}
+                                      className="h-screen pt-24"
+                                    >
+                                      <Create
+                                        gameState={gameState}
+                                        setGameState={setGameState}
+                                      />
+                                    </motion.div>
+                                  </>
                                 ) : (
                                   <>
                                     <Disclaimer
@@ -261,23 +303,76 @@ const Home: NextPage = () => {
                     </>
                   )}
                 </div>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 3, ease: "easeOut" }}
-                  className="w-1/2 relative"
-                >
-                  <Mascot />
-                </motion.div>
+                {(() => {
+                  switch (gameState) {
+                    case "setup":
+                      return (
+                        <>
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 3, ease: "easeOut" }}
+                            className="w-1/2 relative"
+                          >
+                            <Mascot />
+                          </motion.div>
+                        </>
+                      );
+                    case "searching":
+                      return (
+                        <>
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 3, ease: "easeOut" }}
+                            className="w-1/2 relative"
+                          >
+                            <Coral />
+                          </motion.div>
+                        </>
+                      );
+                    case "creating":
+                      return (
+                        <>
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 3, ease: "easeOut" }}
+                            className="w-1/2 relative"
+                          >
+                            <Clam />
+                          </motion.div>
+                        </>
+                      );
+                    case "playing":
+                      return <></>;
+                    default:
+                      return null;
+                  }
+                })()}
               </div>
             </div>
           </div>
-          <div className="fixed w-1/4 h-full top-0 right-0 p-2 bg-warm shadow-xl">
-            <ChatSidebar address={address} avatar={avatar} />
-          </div>
+          {gameState == "playing" ? (
+            <>
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: "0%" }}
+                exit={{ x: "100%" }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="fixed w-1/4 h-full top-0 right-0 p-2 bg-warm shadow-xl"
+              >
+                <ChatSidebar address={address} avatar={avatar} />
+              </motion.div>
+            </>
+          ) : (
+            <></>
+          )}
         </AnimatePresence>
-        <div className="w-full absolute bottom-0">
+        <div className="w-full absolute z-40 bottom-0">
           <Waves
             waveColor={"wave-fill-light"}
             accent={
@@ -288,6 +383,7 @@ const Home: NextPage = () => {
             waveLength={20}
             waveHeight={15}
           />
+          <div className="absolute bottom-0 w-full h-2 bg-[#eee0da]"></div>
         </div>
       </main>
     </div>

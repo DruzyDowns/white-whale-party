@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const Mascot = () => {
+const Clam = () => {
   return (
     <div className="w-full relative grid grid-cols-1 grid-rows-1">
-      <div className="absolute flex w-1/2 h-1/3 inset-1/4 blur-2xl overflow-hidden">
+      <div className="absolute inset-[15%] flex w-3/4 h-1/2 rounded-full blur-2xl overflow-hidden">
         <motion.div
           animate={{ x: ["50%", "0%"] }}
           transition={{
@@ -17,9 +17,9 @@ const Mascot = () => {
         ></motion.div>
       </div>
       <motion.div
-        animate={{ y: [0, -7, 0], skew: [0, -1, 0] }}
+        animate={{ y: [0, -5, 0], rotate: [1, -1, 1] }}
         transition={{
-          duration: 4,
+          duration: 7,
           repeat: Infinity,
           repeatType: "reverse",
           ease: "easeInOut",
@@ -28,25 +28,7 @@ const Mascot = () => {
       >
         <Image
           className=""
-          src={"/white_whale-mascot.png"}
-          width={1024}
-          height={1024}
-          alt=""
-        />
-      </motion.div>
-      <motion.div
-        animate={{ y: [0, -15, 0], skew: [0, -5, 0], scale: [1, 1.1, 1] }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut",
-        }}
-        className="relative z-10 row-start-1 col-start-1"
-      >
-        <Image
-          className=""
-          src={"/white_whale-mascot-halo.png"}
+          src={"/white_whale_clam.png"}
           width={1024}
           height={1024}
           alt=""
@@ -56,4 +38,4 @@ const Mascot = () => {
   );
 };
 
-export default Mascot;
+export default Clam;

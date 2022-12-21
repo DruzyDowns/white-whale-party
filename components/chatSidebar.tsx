@@ -51,9 +51,6 @@ const ChatSidebar = ({ ...props }) => {
                 height={420}
                 alt=""
               />
-              <div className="h-fit">
-                <ConnectButton chainStatus="icon" showBalance={false} />
-              </div>
             </motion.div>
           </>
         ) : (

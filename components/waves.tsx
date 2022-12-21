@@ -54,7 +54,7 @@ const Waves = ({ ...props }) => {
             className="w-1/2"
             animate={{
               skewX: [0, 20, 0, 15, 0],
-              scaleY: [1, 0.9, 1],
+              scaleY: [0.5, 0.7, 0.5],
               y: [15, props.waveHeight, 15],
             }}
             transition={{ duration: 5, repeat: Infinity }}
@@ -65,7 +65,7 @@ const Waves = ({ ...props }) => {
             className="w-1/2"
             animate={{
               skewX: [0, 20, 0, 15, 0],
-              scaleY: [1, 0.9, 1],
+              scaleY: [0.5, 0.7, 0.5],
               y: [15, props.waveHeight, 15],
             }}
             transition={{ duration: 5, repeat: Infinity }}
