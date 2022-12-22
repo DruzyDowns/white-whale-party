@@ -1,18 +1,32 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
+import { useContractEvent } from "wagmi";
+import factoryAbi from "../contracts/WhiteWhaleFactory.json";
+import whiteWhaleAbi from "../contracts/WhiteWhaleFactory.json";
 
 const PartyCard = ({ partyData, ...props }: any) => {
   const [cardSelected, setCardSelected] = useState(false);
 
   const handleGameStart = () => {
-    console.log("joining game");
+    //console.log("joining game");
   };
 
   const handleCardView = (cardData: any) => {
     setCardSelected(true);
     props.setSelectedPartyData(cardData);
   };
+
+  const factoryABI = factoryAbi.factoryAbi;
+
+  useContractEvent({
+    address: process.env.NEXT_PUBLIC_CONTRACT_FACTORY_ADDRESS,
+    abi: factoryABI,
+    eventName: "GameDeployed",
+    listener(node, label, owner) {
+      console.log(node, label, owner);
+    },
+  });
 
   return (
     <div
@@ -64,42 +78,11 @@ const Search = ({ ...props }) => {
       symbol: "SVWW",
       contract: "ox001204q304590345134532453241",
     },
-    {
-      name: "First Annual Stapleverse WW Gift Exchange",
-      symbol: "SVWW",
-      contract: "ox001204q304590345134532453242",
-    },
-    {
-      name: "Second Annual Stapleverse WW Gift Exchange",
-      symbol: "SVWW",
-      contract: "ox001204q304590345134532453243",
-    },
-    {
-      name: "Third Annual Stapleverse WW Gift Exchange",
-      symbol: "SVWW",
-      contract: "ox001204q30459034513453245324",
-    },
-    {
-      name: "First Annual Stapleverse WW Gift Exchange",
-      symbol: "SVWW",
-      contract: "ox001204q304590345134532453245",
-    },
-    {
-      name: "Second Annual Stapleverse WW Gift Exchange",
-      symbol: "SVWW",
-      contract: "ox001204q304590345134532453246",
-    },
-    {
-      name: "Third Annual Stapleverse WW Gift Exchange",
-      symbol: "SVWW",
-      contract: "ox001204q304590345134532453247",
-    },
   ];
   return (
     <div className="relative bg-warm rounded-lg shadow-md p-4">
       <AnimatePresence>
         <motion.div
-          key={selectedPartyData.contract}
           initial={{ opacity: "0%" }}
           animate={{ opacity: "100%" }}
           exit={{ opacity: "0%" }}
@@ -155,9 +138,9 @@ const Search = ({ ...props }) => {
       </div>
 
       <div className="relative h-[75vh] space-y-2 overflow-y-scroll">
-        {dummyData.map((party) => (
+        {dummyData.map((party, i) => (
           <PartyCard
-            key={party.contract}
+            key={i}
             partyData={party}
             gameState={props.gameState}
             setGameState={props.setGameState}

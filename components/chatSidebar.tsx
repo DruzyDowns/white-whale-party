@@ -30,7 +30,6 @@ const ChatSidebar = ({ ...props }) => {
     setChatBlank(false);
     setChatValue(e.target.value);
   };
-  console.log(props);
 
   return (
     <>

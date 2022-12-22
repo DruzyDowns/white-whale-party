@@ -20,6 +20,7 @@ import Search from "../components/search";
 import Coral from "../components/coral";
 import Clam from "../components/clam";
 import Create from "../components/create";
+import Game from "../components/game";
 
 const spectral = Spectral({
   weight: ["800", "600"],
@@ -42,7 +43,7 @@ const Home: NextPage = () => {
     //abi: ensRegistryABI,
     eventName: "NewOwner",
     listener(node, label, owner) {
-      console.log(node, label, owner);
+      //console.log(node, label, owner);
     },
   });
 
@@ -287,8 +288,27 @@ const Home: NextPage = () => {
                                 )}
                               </>
                             );
-                          case "active":
-                            return <></>;
+                          case "playing":
+                            return (
+                              <>
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{
+                                    duration: 0.7,
+                                    ease: "easeOut",
+                                  }}
+                                  className="w-[200%] h-screen pt-24"
+                                >
+                                  <Game
+                                    address={address}
+                                    gameState={gameState}
+                                    setGameState={setGameState}
+                                  />
+                                </motion.div>
+                              </>
+                            );
                           default:
                             return null;
                         }

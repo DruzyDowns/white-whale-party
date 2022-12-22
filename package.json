@@ -11,6 +11,7 @@
   "dependencies": {
     "@next/font": "^13.0.7",
     "@rainbow-me/rainbowkit": "^0.8.1",
+    "@zoralabs/zdk": "^2.2.0",
     "axios": "^1.2.1",
     "ethers": "^5.0.0",
     "framer-motion": "^7.10.2",
